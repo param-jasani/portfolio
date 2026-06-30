@@ -301,6 +301,43 @@ body {
 .highlight-pink .story-card .deck { color: #131313; }
 .highlight-pink .story-card .headline:hover { color: var(--hazard-white); }
 
+/* Highlight Pink for Widgets */
+.side-widget.highlight-pink {
+  background-color: var(--cotton-candy);
+  color: #000;
+  border: none;
+}
+.side-widget.highlight-pink .widget-title {
+  color: #000;
+  font-weight: 700;
+}
+.side-widget.highlight-pink .sub-stat {
+  color: #333;
+}
+
+/* Other Platforms Widget Styling */
+.platforms-widget {
+  background-color: var(--surface-slate);
+  border: 1px solid var(--ultraviolet);
+}
+
+.platforms-widget .widget-title {
+  color: var(--jelly-mint);
+}
+
+.platforms-widget .pill-tag {
+  background-color: transparent;
+  color: var(--hazard-white);
+  border: 1px solid var(--ultraviolet);
+  transition: all 0.15s ease;
+}
+
+.platforms-widget .pill-tag:hover {
+  background-color: var(--ultraviolet);
+  color: var(--hazard-white);
+  border-color: var(--ultraviolet);
+}
+
 .highlight-orange .story-card {
   background-color: var(--burnt-orange);
   border: none;
