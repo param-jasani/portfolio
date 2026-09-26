@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>index=param: Param Jasani</title>
+<link rel="icon" href="../../assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter+Tight:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0b;
+    --panel: #121212;
+    --panel-2: #181818;
+    --line: #262626;
+    --fg: #d4d4d4;
+    --strong: #ffffff;
+    --dim: #7a7a7a;
+    --inv-bg: #ffffff;
+    --inv-fg: #0b0b0b;
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    --sans: 'Inter Tight', system-ui, sans-serif;
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f4f4; --panel: #ffffff; --panel-2: #f7f7f7; --line: #e2e2e2;
+    --fg: #2b2b2b; --strong: #000; --dim: #7a7a7a; --inv-bg: #000; --inv-fg: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--mono); font-size: 13.5px; line-height: 1.55; }
+  a { color: var(--strong); text-underline-offset: 3px; }
+  a:hover { background: var(--inv-bg); color: var(--inv-fg); text-decoration: none; }
+  ul { list-style: none; }
+  button { font: inherit; color: inherit; }
+
+  /* App chrome */
+  .appbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--panel);
+    position: sticky; top: 0; z-index: 5;
+  }
+  .logo { font-family: var(--sans); font-weight: 800; letter-spacing: -.02em; color: var(--strong); font-size: 15px; }
+  .logo span { color: var(--dim); font-weight: 500; }
+  .appbar nav { display: flex; gap: 14px; margin-left: auto; font-size: 12.5px; }
+  .appbar nav a { color: var(--dim); text-decoration: none; }
+  .appbar nav a:hover { color: var(--inv-fg); }
+  .mode { background: none; border: 1px solid var(--line); padding: 2px 8px; cursor: pointer; }
+  .mode:hover { border-color: var(--strong); }
+  @media (max-width: 640px) { .appbar nav { display: none; } .mode { margin-left: auto; } }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 18px 60px; }
+
+  /* Identity row */
+  .ident { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; margin-bottom: 22px; }
+  .ident img { width: 76px; height: 76px; filter: grayscale(1) contrast(1.1); border: 1px solid var(--line); }
+  .ident img:hover { filter: none; }
+  .ident h1 { font-family: var(--sans); font-weight: 800; font-size: clamp(28px, 4.5vw, 48px); letter-spacing: -.035em; line-height: 1; color: var(--strong); }
+  .ident p { color: var(--dim); margin-top: 6px; }
+  .ident .cta { background: var(--inv-bg); color: var(--inv-fg); padding: 9px 14px; text-decoration: none; font-weight: 700; white-space: nowrap; }
+  @media (max-width: 720px) { .ident { grid-template-columns: auto 1fr; } .ident .cta { grid-column: 1 / -1; justify-self: start; } }
+
+  /* Search bar */
+  .search {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--strong); background: var(--panel); padding: 10px 12px;
+  }
+  .search .k { color: var(--dim); white-space: nowrap; }
+  .search input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--strong); font: inherit; font-size: 14px; }
+  .search .go { background: var(--inv-bg); color: var(--inv-fg); border: 0; padding: 4px 12px; cursor: pointer; font-weight: 700; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 18px; color: var(--dim); font-size: 12.5px; }
+  .meta b { color: var(--strong); }
+
+  /* KPI tiles */
+  .kpis { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line); margin-bottom: 18px; }
+  .kpi { padding: 14px 16px; border-right: 1px solid var(--line); background: var(--panel); }
+  .kpi:last-child { border-right: 0; }
+  .kpi .v { font-family: var(--sans); font-weight: 800; font-size: clamp(22px, 3vw, 32px); letter-spacing: -.03em; color: var(--strong); line-height: 1.1; }
+  .kpi .l { color: var(--dim); font-size: 12px; }
+  @media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, 1fr); } .kpi { border-bottom: 1px solid var(--line); } .kpi:nth-child(2n) { border-right: 0; } .kpi:last-child { grid-column: 1 / -1; } }
+
+  /* Timechart */
+  .chart { border: 1px solid var(--line); background: var(--panel); padding: 14px 16px 8px; margin-bottom: 18px; }
+  .chart h2 { font-size: 12px; font-weight: 500; color: var(--dim); margin-bottom: 10px; }
+  .bars { display: flex; align-items: end; gap: 6px; height: 96px; }
+  .bars div { flex: 1; background: var(--fg); opacity: .85; position: relative; min-height: 2px; }
+  .bars div:hover { opacity: 1; background: var(--strong); }
+  .bars div span { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--dim); margin-bottom: 2px; }
+  .axis { display: flex; gap: 6px; margin-top: 6px; }
+  .axis span { flex: 1; text-align: center; color: var(--dim); font-size: 11px; }
+
+  /* Layout: facets + events */
+  .main { display: grid; grid-template-columns: 230px 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .main { grid-template-columns: 1fr; } }
+  .facets { border: 1px solid var(--line); background: var(--panel); padding: 14px; position: sticky; top: 64px; }
+  @media (max-width: 860px) { .facets { position: static; } }
+  .facets h3 { font-size: 12px; color: var(--dim); font-weight: 500; margin: 0 0 8px; }
+  .facets h3 + ul { margin-bottom: 16px; }
+  .facet { display: flex; justify-content: space-between; width: 100%; background: none; border: 0; padding: 3px 6px; cursor: pointer; text-align: left; }
+  .facet:hover { background: var(--panel-2); }
+  .facet.on { background: var(--inv-bg); color: var(--inv-fg); }
+  .facet .c { color: var(--dim); }
+  .facet.on .c { color: inherit; }
+
+  .events { border: 1px solid var(--line); background: var(--panel); }
+  .ev { display: grid; grid-template-columns: 22px 150px 1fr; gap: 0 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .ev:last-child { border-bottom: 0; }
+  .ev:hover { background: var(--panel-2); }
+  .ev[hidden] { display: none; }
+  .ev .x { background: none; border: 0; color: var(--dim); cursor: pointer; padding: 0; text-align: left; }
+  .ev time { color: var(--dim); white-space: nowrap; }
+  .ev .msg { color: var(--strong); }
+  .ev .msg .sev { display: inline-block; font-size: 11px; padding: 0 5px; margin-right: 8px; border: 1px solid var(--dim); color: var(--fg); }
+  .ev .msg .sev.crit { background: var(--inv-bg); color: var(--inv-fg); border-color: var(--inv-bg); }
+  .ev .kv { grid-column: 3; color: var(--dim); font-size: 12.5px; margin-top: 2px; overflow-wrap: anywhere; }
+  .ev .kv b { color: var(--fg); font-weight: 500; }
+  .ev .detail { grid-column: 2 / -1; margin-top: 8px; padding: 10px 12px; border-left: 2px solid var(--strong); background: var(--panel-2); color: var(--fg); display: none; }
+  .ev.open .detail { display: block; }
+  .ev.open .x { color: var(--strong); }
+  @media (max-width: 600px) {
+    .ev { grid-template-columns: 18px 1fr; }
+    .ev time { grid-column: 2; }
+    .ev .msg, .ev .kv { grid-column: 2; }
+    .ev .detail { grid-column: 1 / -1; }
+  }
+  .empty { padding: 30px 14px; color: var(--dim); display: none; }
+
+  .foot { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px 20px; color: var(--dim); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header class="appbar">
+  <span class="logo">param<span>&gt;_ search &amp; reporting</span></span>
+  <nav>
+    <a href="https://github.com/param-jasani" target="_blank" rel="noopener">github</a>
+    <a href="https://www.linkedin.com/in/param-jasani/" target="_blank" rel="noopener">linkedin</a>
+    <a href="https://tryhackme.com/p/CVE" target="_blank" rel="noopener">tryhackme</a>
+    <a href="https://ctf.haxnation.org/soc/practice" target="_blank" rel="noopener">soc sim</a>
+  </nav>
+  <button class="mode" id="mode" type="button">light</button>
+</header>
+
+<div class="wrap">
+  <section class="ident">
+    <img src="../../assets/avatar.jpg" width="76" height="76" alt="Param's avatar">
+    <div>
+      <h1>Param Jasani</h1>
+      <p>host=mumbai · age=20 · role="blue team / SOC · backend · CTF author"</p>
+    </div>
+    <a class="cta" href="mailto:param_jasani@rediffmail.com">| sendemail to=param</a>
+  </section>
+
+  <form class="search" id="f" role="search">
+    <span class="k">index=param</span>
+    <input id="q" type="search" placeholder="search: kubernetes, apt29, rust, splunk…" aria-label="Filter events">
+    <button class="go" type="submit">search</button>
+  </form>
+  <p class="meta"><span><b id="count">0</b> events</span><span>time range: <b>2021 → now</b></span><span>sourcetypes: job · edu · project · ctf · blog · cert</span></p>
+
+  <section class="kpis" aria-label="Key numbers">
+    <div class="kpi"><div class="v">Top 1%</div><div class="l">tryhackme · 296 rooms</div></div>
+    <div class="kpi"><div class="v">14</div><div class="l">SOC scenarios authored</div></div>
+    <div class="kpi"><div class="v">321</div><div class="l">alerts written</div></div>
+    <div class="kpi"><div class="v">19</div><div class="l">k8s nodes · 7.5 TB ceph</div></div>
+    <div class="kpi"><div class="v">10+</div><div class="l">published posts</div></div>
+  </section>
+
+  <section class="chart" aria-label="Events per year">
+    <h2>| timechart span=1y count</h2>
+    <div class="bars" id="bars"></div>
+    <div class="axis" id="axis"></div>
+  </section>
+
+  <div class="main">
+    <aside class="facets">
+      <h3>sourcetype</h3>
+      <ul id="facets"></ul>
+      <h3>links</h3>
+      <ul>
+        <li><a href="https://haxnation.org/blog/authors" target="_blank" rel="noopener">haxnation blog</a></li>
+        <li><a href="https://param-jasani.github.io/sec-writeups" target="_blank" rel="noopener">sec-writeups</a></li>
+        <li><a href="https://app.hackthebox.com/users/2094726" target="_blank" rel="noopener">hackthebox</a></li>
+        <li><a href="https://app.letsdefend.io/user/ZeroCVE" target="_blank" rel="noopener">letsdefend</a></li>
+        <li><a href="https://hackerone.com/zero_cve" target="_blank" rel="noopener">hackerone</a></li>
+        <li><a href="https://app.grayswan.ai/arena/user/6a9b10f5c5fda2fee8dce6c5" target="_blank" rel="noopener">gray swan arena</a></li>
+        <li><a href="https://www.cloudskillsboost.google/public_profiles/f70e58b9-4b59-4d47-97cf-e3b60baad4ef" target="_blank" rel="noopener">google skills</a></li>
+        <li><a href="https://leetcode.com/u/param-jasani" target="_blank" rel="noopener">leetcode</a></li>
+        <li><a href="https://linktr.ee/ParamJasani" target="_blank" rel="noopener">linktree</a></li>
+      </ul>
+    </aside>
+
+    <section class="events" id="events" aria-label="Events">
+      <p class="empty" id="empty">No results found. Try "k8s", "soc" or "rust".</p>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <span>"Until death, all defeat is psychological."</span>
+    <a href="mailto:param_jasani@rediffmail.com">param_jasani@rediffmail.com</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var E = [
+    ['2026-09-12', 'blog', 'info', 'Published: HTB Mumbai Meetup #19 (BYOVD, kernel drivers, EDR evasion)', 'url="haxnation.org/blog" tags="windows,edr,ppl"', 'Meetup write-up covering bring-your-own-vulnerable-driver attacks, PPL and EDR tampering.', 'https://haxnation.org/blog/htb-mumbai-meetup-19-summary'],
+    ['2026-08-29', 'blog', 'info', 'Published: How intelligently, intelligent people do threat intelligence?', 'tags="cti,stix,taxii,diamond-model"', 'How IOCs are collected and shared, STIX/TAXII, and the diamond model.', 'https://haxnation.org/blog/ti'],
+    ['2026-06-28', 'blog', 'info', 'Published: Antisyphon Threat Hunting Summit 2026 summary', 'tags="threat-hunting,rita,peak"', 'Notes from the Antisyphon summit: PEAK framework, RITA, THOR Collective.', 'https://haxnation.org/blog/antisyphon-training-thrunting-summit-2026-summary'],
+    ['2026-06-05', 'blog', 'info', 'Published: The Purdue Model / Introduction to ICS-OT security', 'tags="ics,ot,scada"', 'Two-part primer on industrial control system security.', 'https://haxnation.org/blog/the-purdue-model'],
+    ['2026-06-01', 'ctf', 'crit', 'Authored 14 SOC Simulator scenarios: 321 alerts', 'platform="ctf.haxnation.org" actors="APT29,Kimsuky,RomCom,APT32,Emotet"', 'Every scenario on the HaxNation SOC Simulator: RomCom (40 alerts), Kimsuky (35), Cobalt Kitty (33), Midnight Blizzard (32), Silent Tide (27), Midnight Cipher (26) and 8 more.', 'https://ctf.haxnation.org/soc/practice'],
+    ['2026-05-20', 'ctf', 'high', 'Authored 4 Web3 CTF challenges', 'names="Sword Claim,Ghost Staker,Phantom Fund,Echo Vault" difficulty="easy→hard"', 'Smart-contract exploitation challenges on the HaxNation CTF platform.', 'https://ctf.haxnation.org/'],
+    ['2026-05-10', 'project', 'high', 'Qualys VMDR lab deployed', 'stack="qualys,vmdr,trurisk" hosts="windows,linux"', 'Cloud Agents on Windows and Linux; TruRisk-prioritised remediation.', ''],
+    ['2026-03-01', 'job', 'crit', 'Joined HaxNation Mumbai as SOC scenario & CTF developer', 'status="current" org="HaxNation"', 'CTF challenges across web, Web3, network, crypto, forensics and infra; SOC scenarios; blog author; MDX/Mermaid/KaTeX support for the blog platform.', 'https://haxnation.org/'],
+    ['2026-01-18', 'project', 'info', 'dispenser: Rust file-forensics CLI', 'lang="rust" features="metadata,sha256,sort"', 'Recursive metadata, SHA-256 checksums, sorting by extension or timestamp.', 'https://github.com/param-jasani/dispenser'],
+    ['2026-01-10', 'project', 'high', 'mayajal-core: SSH honeypot in Rust', 'lang="rust" storage="sqlite" logs="hmac-signed"', 'Deceptive Linux filesystem backed by per-user SQLite micro-DBs, tiered command emulation.', 'https://github.com/param-jasani/mayajal-core'],
+    ['2025-08-31', 'cert', 'info', 'Google Cloud Skills: Diamond League, 14 badges', 'badges="Google SecOps Deep Dive,Terraform Essentials,…"', 'Includes Google Security Operations Deep Dive and Fundamentals.', 'https://www.cloudskillsboost.google/public_profiles/f70e58b9-4b59-4d47-97cf-e3b60baad4ef'],
+    ['2025-06-15', 'project', 'crit', '19-node Kubernetes homelab online', 'nodes=19 control_planes=3 workers=15 storage="7.5TB rook-ceph" lb="haproxy"', 'Bare-metal cluster evolved to HA control planes; storage moved from Longhorn to Rook Ceph for training I/O.', 'https://github.com/param-jasani/K8s-Automation-Scripts'],
+    ['2025-06-01', 'project', 'crit', 'SOC lab: Splunk + Sysmon + MITRE Caldera', 'endpoints=6 siem="splunk" emulation="caldera"', 'Adversary emulation used to prove detections fire, then tuned against real traces.', ''],
+    ['2025-03-15', 'project', 'high', 'ELK IDS → SIEM pipeline', 'stack="suricata,filebeat,logstash,elasticsearch,kibana"', 'Correlation rules for network threat detection.', ''],
+    ['2025-02-15', 'project', 'info', 'Enterprise AD / WSUS / WDS lab', 'stack="ad,dns,dhcp,vlan,wsus,wds"', 'Central patching and network OS deployment.', ''],
+    ['2024-08-01', 'edu', 'info', 'Started B.E. Computer Engineering, VCET Vasai', 'years="2024-2027" cgpa=7.0', '', ''],
+    ['2023-11-01', 'job', 'high', 'Backend Developer Intern, Hellbent Software', 'until="2024-03" stack="django,fastapi,flask,oracle,docker"', 'REST APIs, Oracle indexing and PL/SQL tuning, Dockerised services.', ''],
+    ['2023-08-01', 'project', 'info', 'SecureRoute: Java secure messenger', 'crypto="aes-ctr,rsa" db="mongodb"', '', ''],
+    ['2023-04-01', 'project', 'info', 'Port scanner, PCAP reader, CVE searcher', 'lang="java,python"', 'Early security tooling.', ''],
+    ['2021-08-01', 'edu', 'info', 'Started Diploma in Computer Engineering, Govt. Polytechnic Nagpur', 'years="2021-2024" cgpa=9.2', '', '']
+  ];
+
+  var list = document.getElementById('events');
+  var empty = document.getElementById('empty');
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  E.forEach(function (e, i) {
+    var li = document.createElement('article');
+    li.className = 'ev';
+    li.dataset.st = e[1];
+    li.dataset.text = e.join(' ').toLowerCase();
+    var sev = e[2] === 'info' ? '' : '<span class="sev ' + (e[2] === 'crit' ? 'crit' : '') + '">' + e[2].toUpperCase() + '</span>';
+    var detail = (e[5] || e[6]) ? '<div class="detail">' + esc(e[5]) + (e[6] ? ' <a href="' + e[6] + '" target="_blank" rel="noopener">open ↗</a>' : '') + '</div>' : '';
+    li.innerHTML =
+      '<button class="x" type="button" aria-expanded="false" aria-label="Expand event">&gt;</button>' +
+      '<time>' + e[0] + '</time>' +
+      '<p class="msg">' + sev + esc(e[3]) + '</p>' +
+      '<p class="kv"><b>sourcetype</b>=' + e[1] + ' ' + esc(e[4]) + '</p>' + detail;
+    li.querySelector('.x').addEventListener('click', function () {
+      var open = li.classList.toggle('open');
+      this.setAttribute('aria-expanded', String(open));
+      this.textContent = open ? 'v' : '>';
+    });
+    list.insertBefore(li, empty);
+  });
+
+  // facets
+  var counts = {};
+  E.forEach(function (e) { counts[e[1]] = (counts[e[1]] || 0) + 1; });
+  var facetUl = document.getElementById('facets');
+  var active = 'all';
+  ['all'].concat(Object.keys(counts)).forEach(function (st) {
+    var li = document.createElement('li');
+    li.innerHTML = '<button class="facet' + (st === 'all' ? ' on' : '') + '" type="button" data-st="' + st + '"><span>' + st + '</span><span class="c">' + (st === 'all' ? E.length : counts[st]) + '</span></button>';
+    facetUl.appendChild(li);
+  });
+  facetUl.addEventListener('click', function (ev) {
+    var b = ev.target.closest('.facet');
+    if (!b) return;
+    active = b.dataset.st;
+    facetUl.querySelectorAll('.facet').forEach(function (x) { x.classList.toggle('on', x === b); });
+    filter();
+  });
+
+  // search
+  var q = document.getElementById('q');
+  function filter() {
+    var terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    var n = 0;
+    list.querySelectorAll('.ev').forEach(function (el) {
+      var ok = (active === 'all' || el.dataset.st === active) &&
+        terms.every(function (t) { return el.dataset.text.indexOf(t) !== -1; });
+      el.hidden = !ok;
+      if (ok) n++;
+    });
+    document.getElementById('count').textContent = n;
+    empty.style.display = n ? 'none' : 'block';
+  }
+  q.addEventListener('input', filter);
+  document.getElementById('f').addEventListener('submit', function (e) { e.preventDefault(); filter(); });
+  filter();
+
+  // timechart
+  var years = {};
+  E.forEach(function (e) { var y = e[0].slice(0, 4); years[y] = (years[y] || 0) + 1; });
+  var ys = [], max = 0;
+  for (var y = 2021; y <= 2026; y++) { ys.push(y); max = Math.max(max, years[y] || 0); }
+  var bars = document.getElementById('bars'), axis = document.getElementById('axis');
+  ys.forEach(function (y) {
+    var c = years[y] || 0;
+    var d = document.createElement('div');
+    d.style.height = (c / max * 100) + '%';
+    d.title = y + ': ' + c + ' events';
+    d.innerHTML = '<span>' + c + '</span>';
+    bars.appendChild(d);
+    var s = document.createElement('span'); s.textContent = y; axis.appendChild(s);
+  });
+
+  // theme
+  var r = document.documentElement, m = document.getElementById('mode');
+  m.addEventListener('click', function () {
+    var light = r.getAttribute('data-theme') === 'light';
+    r.setAttribute('data-theme', light ? 'dark' : 'light');
+    m.textContent = light ? 'light' : 'dark';
+  });
+})();
+</script>
+<script src="../../assets/theme-code.js" defer></script>
+</body>
+</html>
