@@ -51,7 +51,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js" } }</script>
 
   <script type="application/ld+json">
   {
@@ -118,7 +117,6 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <canvas id="stage" class="stage" aria-hidden="true"></canvas>
   <div class="cursor" id="cursor" aria-hidden="true"></div>
 
   <div class="boot-screen" id="boot" aria-hidden="true">
@@ -154,9 +152,9 @@
       <p class="hero-top" aria-hidden="true"><span>PARAM-JASANI</span><span class="hero-manual">Blue Team Manual</span><span>IST <time id="clock">--:--:--</time></span></p>
       <div class="hero-main">
         <h1 class="hero-name" id="hero-h"><span>Param</span> <span>Jasani</span></h1>
-        <p class="hero-whatis">Security &amp; systems engineer: detection engineering, infrastructure, Rust. <a href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener">SC-200</a> certified. Top 1% on TryHackMe. Mumbai.</p>
+        <p class="hero-whatis">Security &amp; systems engineer: detection engineering, infrastructure, Rust. SC-200 certified. Top 1% on TryHackMe. Mumbai.</p>
       </div>
-      <p class="hero-foot"><span class="hero-fig">fig. 0: aegis. polished chrome, reshaped by every section. touch it.</span><a class="hero-down" href="#main">read the manual ↓</a></p>
+      <p class="hero-foot"><span class="hero-fig">see also: man param</span><a class="hero-down" href="#main">read the manual ↓</a></p>
     </div>
   </section>
 
@@ -192,7 +190,7 @@
     <section class="sec" id="description" aria-labelledby="desc-h">
       <h2 class="sh" id="desc-h">DESCRIPTION</h2>
       <div class="body prose">
-        <p><b>param</b> is a 20-year-old security and systems engineer working on detection engineering, infrastructure and high-performance systems code in Rust, and a Microsoft certified Security Operations Analyst (<a href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener">SC-200</a>). I learn by building: a 19-node Kubernetes cluster on bare metal, a Splunk SOC fed by Sysmon and tested with MITRE Caldera, an IDS-to-SIEM pipeline on the ELK Stack, and an enterprise network with Active Directory, WSUS and WDS.</p>
+        <p><b>param</b> is a 20-year-old security and systems engineer working on detection engineering, infrastructure and high-performance systems code in Rust, and a Microsoft certified Security Operations Analyst (SC-200). I learn by building: a 19-node Kubernetes cluster on bare metal, a Splunk SOC fed by Sysmon and tested with MITRE Caldera, an IDS-to-SIEM pipeline on the ELK Stack, and an enterprise network with Active Directory, WSUS and WDS.</p>
         <p>Before security I shipped backend code. At Hellbent Software I built REST APIs in Django, FastAPI and Flask and tuned Oracle queries. I still treat detection as an engineering problem: pipelines, data and automation. Lately that means Rust: <a href="https://github.com/param-jasani/mayajal-core" target="_blank" rel="noopener">Māyājāl</a>, a container-isolated honeypot built on Tokio and russh, and contributions to libmagic-rs and dz6.</p>
         <p>These days I author SOC investigation scenarios and CTF challenges for <a href="https://ctf.haxnation.org/" target="_blank" rel="noopener">HaxNation</a>, write about threat intelligence, ICS/OT and the Mumbai security meetups, play on TryHackMe and HackTheBox, break AI models on Gray Swan Arena, and publish DFIR writeups for HTB Sherlocks and LetsDefend alerts.</p>
       </div>
@@ -221,7 +219,7 @@
           <div><dt>AGE</dt><dd>20</dd></div>
           <div><dt>LOCATION</dt><dd>Mumbai, India</dd></div>
           <div><dt>ROLE</dt><dd>CTF developer &amp; technical writer @ HaxNation (core volunteer)</dd></div>
-          <div><dt>CERT</dt><dd><a href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener">Microsoft SC-200</a>, Security Operations Analyst Associate</dd></div>
+          <div><dt>CERT</dt><dd>Microsoft SC-200, Security Operations Analyst Associate</dd></div>
           <div><dt>STUDY</dt><dd>B.E. Computer Engineering, VCET Vasai (2024–27)</dd></div>
           <div><dt>HANDLES</dt><dd>CVE · ZeroCVE · zero_cve</dd></div>
           <div><dt>STATUS</dt><dd>open to SOC / blue team roles &amp; internships</dd></div>
@@ -237,7 +235,7 @@
         <div class="cert">
           <p class="when">2026-09 — 2027-09</p>
           <div>
-            <h3><a href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener">Microsoft Certified: Security Operations Analyst Associate (SC-200)</a></h3>
+            <h3>Microsoft Certified: Security Operations Analyst Associate (SC-200)</h3>
             <p>Issued by Microsoft. Credential ID <a class="cred" href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener" aria-label="Verify credential E00BD7D30616360C on Microsoft Learn">E00BD7D30616360C</a> <span class="dim">(click to verify)</span></p>
             <p class="stack">microsoft-sentinel defender-xdr kql entra-id incident-response threat-hunting</p>
           </div>
@@ -252,7 +250,7 @@
         <table class="exit">
           <caption class="note">Returns 0 when things went well. Some results:</caption>
           <tbody>
-            <tr><th scope="row"><a href="https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C" target="_blank" rel="noopener">SC-200</a></th><td>Microsoft Certified: Security Operations Analyst Associate. Sentinel, Defender XDR, KQL.</td></tr>
+            <tr><th scope="row">SC-200</th><td>Microsoft Certified: Security Operations Analyst Associate. Sentinel, Defender XDR, KQL.</td></tr>
             <tr><th scope="row"><a href="https://tryhackme.com/p/CVE" target="_blank" rel="noopener">Top 1%</a></th><td>TryHackMe. 0xE Guardian, 296 rooms, 47 badges.</td></tr>
             <tr><th scope="row"><a href="https://ctf.haxnation.org/soc/practice" target="_blank" rel="noopener"><span class="count">14</span> SOCs</a></th><td>Every scenario on the HaxNation SOC Simulator: 321 alerts to triage.</td></tr>
             <tr><th scope="row"><span class="count">19</span> nodes</th><td>Kubernetes homelab: 3 control planes, 15 workers, 7.5 TB Rook Ceph.</td></tr>
@@ -591,7 +589,5 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="script.js" defer></script>
-  <script src="assets/stage.js" defer></script>
-  <script src="assets/theme-code.js" defer></script>
 </body>
 </html>

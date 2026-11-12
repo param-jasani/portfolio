@@ -337,7 +337,6 @@
     ctf: 'https://ctf.haxnation.org/',
     blog: 'https://blog.haxnation.org/authors',
     writeups: 'https://param-jasani.github.io/sec-writeups',
-    sc200: 'https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C',
     mslearn: 'https://learn.microsoft.com/en-us/users/param-jasani/',
     linktree: 'https://linktr.ee/ParamJasani'
   };
@@ -380,7 +379,7 @@
     cat: function (args) {
       var f = (args[0] || '').replace(/\.txt$/, '');
       if (f === 'about') return 'I learn by building: a 19-node k8s cluster, a Splunk SOC, an ELK SIEM, an AD lab.\nI write SOC scenarios and CTF challenges, and Rust tools when I get bored.';
-      if (f === 'certs') return 'Microsoft Certified: Security Operations Analyst Associate (SC-200)\nissued 2026-09 · expires 2027-09 · id E00BD7D30616360C\n→ ' + link(LINKS.sc200, 'verify on learn.microsoft.com');
+      if (f === 'certs') return 'Microsoft Certified: Security Operations Analyst Associate (SC-200)\nissued 2026-09 · expires 2027-09 · id E00BD7D30616360C';
       if (f === 'contact') return link('mailto:' + EMAIL, EMAIL);
       if (f === 'motto') return '"Until death, all defeat is psychological."';
       if (f === 'skills') return esc('soc:     sentinel defender-xdr kql splunk elk google-secops sysmon suricata yara qualys att&ck caldera\ninfra:   kubernetes rook-ceph haproxy docker terraform azure active-directory/entra\nlang:    rust (tokio russh) python c java sql bash powershell\nbackend: django fastapi flask oracle postgresql mongodb');
@@ -394,7 +393,7 @@
       return 'opening ' + link(LINKS[k]) + ' …';
     },
     stats: function () {
-      return 'sc-200         microsoft certified · ' + link(LINKS.sc200, 'E00BD7D30616360C') + '\ntryhackme      top 1% · 296 rooms · 47 badges\nsoc-simulator  14 scenarios · 321 alerts\nhomelab        19 nodes · 7.5 TB ceph\nwriting        10 posts on the haxnation blog\ngoogle-skills  diamond league · 14 badges';
+      return 'sc-200         microsoft certified\ntryhackme      top 1% · 296 rooms · 47 badges\nsoc-simulator  14 scenarios · 321 alerts\nhomelab        19 nodes · 7.5 TB ceph\nwriting        10 posts on the haxnation blog\ngoogle-skills  diamond league · 14 badges';
     },
     theme: function () { return 'theme set to ' + toggleTheme() + '.'; },
     history: function () { return hist.map(function (h, i) { return '  ' + (i + 1) + '  ' + esc(h); }).join('\n') || '(empty)'; },

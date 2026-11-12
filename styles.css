@@ -422,27 +422,11 @@ body { padding-bottom: 34px; }
 }
 
 @media print {
-  .less, .keys, #examples, .stage, .cursor, .boot-screen, .hero-down { display: none !important; }
+  .less, .keys, #examples, .cursor, .boot-screen, .hero-down { display: none !important; }
   .hero { min-height: 0 !important; }
   .manbar, .cmd, .skip, #copy-email { display: none !important; }
   .avatar img { filter: none; }
   a { text-decoration: none; }
-}
-
-/* ================================================================
-   STAGE — fixed chrome object behind the page (assets/stage.js)
-   ================================================================ */
-html { background: var(--paper); }
-body { background: transparent; }
-.stage {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .9s ease-out;
 }
 
 /* ---------- HERO ---------- */
