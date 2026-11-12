@@ -5,7 +5,7 @@
 
   var CODE = 'e502ma-zerobook';
   // Order of the cycle, relative to the site root.
-  var THEMES = ['index.html', 'themes/siem/index.html', 'themes/broadsheet/index.html'];
+  var THEMES = ['index.html', 'themes/siem/index.html', 'themes/soc/index.html', 'themes/film/index.html'];
 
   var me = document.currentScript && document.currentScript.src;
   if (!me) return;
@@ -31,7 +31,12 @@
       'background:#000;color:#fff;border:1px solid #fff;padding:10px 16px;' +
       'font:600 14px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.02em;';
     document.body.appendChild(toast);
-    setTimeout(function () { location.href = root + next; }, 700);
+    var curtain = document.createElement('div');
+    curtain.style.cssText = 'position:fixed;inset:0;z-index:2147483646;background:#000;transform:scaleY(0);transform-origin:bottom;' +
+      'transition:transform .55s cubic-bezier(.7,0,.2,1);';
+    document.body.appendChild(curtain);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { curtain.style.transform = 'scaleY(1)'; }); });
+    setTimeout(function () { location.href = root + next; }, 750);
   }
 
   // Physical keyboards: rolling buffer of the last typed characters.
