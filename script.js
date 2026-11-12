@@ -17,10 +17,130 @@
     root.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch (e) {}
     syncTheme();
+    window.dispatchEvent(new CustomEvent('themechange', { detail: next }));
     return next;
   }
   themeBtn.addEventListener('click', toggleTheme);
   syncTheme();
+
+  var motion = root.classList.contains('motion');
+
+  // ---------- Boot screen: skip on any key / click, then retire it ----------
+  function booted() { root.classList.add('booted'); }
+  if (root.classList.contains('boot')) {
+    document.addEventListener('keydown', booted, { once: true });
+    document.addEventListener('pointerdown', booted, { once: true });
+    setTimeout(booted, 1500);
+  }
+
+  // ---------- Smooth scroll (Lenis) for mouse/trackpad users ----------
+  var lenis = null;
+  if (motion && window.Lenis && window.matchMedia('(pointer: fine)').matches) {
+    try {
+      lenis = new window.Lenis({ lerp: 0.12, smoothWheel: true });
+      var raf = function (t) { lenis.raf(t); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    } catch (e) { lenis = null; }
+  }
+  function headerOffset() { return window.innerWidth <= 720 ? -88 : -64; }
+  function scrollToY(y, instant) {
+    if (lenis) lenis.scrollTo(y, { immediate: !!instant });
+    else window.scrollTo(0, y);
+  }
+  function scrollByY(dy) {
+    if (lenis) lenis.scrollTo(window.scrollY + dy);
+    else window.scrollBy(0, dy);
+  }
+  function scrollToEl(el) {
+    if (!el) return;
+    if (lenis) lenis.scrollTo(el, { offset: headerOffset() });
+    else el.scrollIntoView();
+  }
+  if (lenis) {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
+      var id = a.getAttribute('href').slice(1);
+      var el = id ? document.getElementById(id) : null;
+      if (!el && id !== 'top') return;
+      e.preventDefault();
+      if (id === 'top') scrollToY(0); else scrollToEl(el);
+      history.pushState(null, '', '#' + id);
+      if (el && id === 'main') { el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true }); }
+    });
+  }
+
+  // ---------- Hero: Mumbai clock + crosshair readout ----------
+  var clock = document.getElementById('clock');
+  if (clock) {
+    var fmt;
+    try { fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); } catch (e) { fmt = null; }
+    var tick = function () { if (fmt) { var s = fmt.format(new Date()); clock.textContent = s; clock.setAttribute('datetime', s); } };
+    tick();
+    setInterval(tick, 1000);
+  }
+  var hero = document.getElementById('hero');
+  var heroX = hero && hero.querySelector('.hero-x');
+  var heroXY = document.getElementById('hero-xy');
+  if (heroX && window.matchMedia('(pointer: fine)').matches) {
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      var x = Math.round(e.clientX - r.left), y = Math.round(e.clientY - r.top);
+      heroX.style.setProperty('--x', x + 'px');
+      heroX.style.setProperty('--y', y + 'px');
+      heroXY.textContent = 'x ' + String(x).padStart(4, '0') + '  y ' + String(y).padStart(4, '0');
+    });
+  }
+
+  // ---------- Scroll moments: headings type in, numbers count, bars fill ----------
+  if (motion && 'IntersectionObserver' in window) {
+    var heads = document.querySelectorAll('.page .sh');
+    var vh = window.innerHeight;
+    var headObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.remove('sh-wait');
+        e.target.classList.add('sh-in');
+        headObs.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    heads.forEach(function (h) {
+      if (h.getBoundingClientRect().top < vh) return; // already on screen: leave it be
+      h.style.setProperty('--n', Math.max(4, h.textContent.length));
+      h.classList.add('sh-wait');
+      headObs.observe(h);
+    });
+
+    var countObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        countObs.unobserve(e.target);
+        e.target.querySelectorAll('.count').forEach(function (c) {
+          var end = parseInt(c.textContent, 10);
+          if (!end) return;
+          var t0 = performance.now(), dur = 700;
+          var step = function (now) {
+            var k = Math.min(1, (now - t0) / dur);
+            c.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+            if (k < 1) requestAnimationFrame(step);
+          };
+          c.textContent = '0';
+          requestAnimationFrame(step);
+        });
+      });
+    }, { threshold: 0.4 });
+    var exitTable = document.querySelector('.exit');
+    if (exitTable && exitTable.getBoundingClientRect().top > vh) countObs.observe(exitTable);
+
+    var barObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        barObs.unobserve(e.target);
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.alerts').forEach(function (t) { barObs.observe(t); });
+  }
 
   // ---------- Project filters ----------
   var flags = document.querySelectorAll('.cmd .flag');
@@ -111,15 +231,20 @@
     }
     var step = LINE * 3;
     switch (e.key) {
-      case 'j': window.scrollBy(0, step); break;
-      case 'k': window.scrollBy(0, -step); break;
-      case 'g': window.scrollTo(0, 0); break;
-      case 'G': window.scrollTo(0, document.documentElement.scrollHeight); break;
+      case 'j': scrollByY(step); break;
+      case 'k': scrollByY(-step); break;
+      case ' ':
+        if (!lenis) return;
+        e.preventDefault();
+        scrollByY((e.shiftKey ? -1 : 1) * (window.innerHeight - 80));
+        break;
+      case 'g': scrollToY(0); break;
+      case 'G': scrollToY(document.documentElement.scrollHeight); break;
       case 't': toggleTheme(); break;
       case '?': e.preventDefault(); openKeys(); break;
       case '/':
         e.preventDefault();
-        document.getElementById('examples').scrollIntoView();
+        scrollToEl(document.getElementById('examples'));
         shellInput.focus({ preventScroll: true });
         break;
       default: return;
@@ -143,8 +268,10 @@
     grayswan: 'https://app.grayswan.ai/arena/user/6a9b10f5c5fda2fee8dce6c5',
     soc: 'https://ctf.haxnation.org/soc/practice',
     ctf: 'https://ctf.haxnation.org/',
-    blog: 'https://haxnation.org/blog/authors',
+    blog: 'https://blog.haxnation.org/authors',
     writeups: 'https://param-jasani.github.io/sec-writeups',
+    sc200: 'https://learn.microsoft.com/api/credentials/share/en-us/param-jasani/E00BD7D30616360C',
+    mslearn: 'https://learn.microsoft.com/en-us/users/param-jasani/',
     linktree: 'https://linktr.ee/ParamJasani'
   };
 
@@ -163,7 +290,7 @@
         'available commands:',
         '  whoami          who is this',
         '  ls [dir]        list things (try: ls projects, ls soc)',
-        '  cat <file>      about | contact | motto | skills',
+        '  cat <file>      about | certs | contact | motto | skills',
         '  open <name>     ' + Object.keys(LINKS).join(' '),
         '  stats           the numbers',
         '  theme           toggle light / dark',
@@ -173,22 +300,23 @@
       ].join('\n');
     },
     whoami: function () {
-      return 'param-jasani (20), Mumbai. blue team / SOC engineer, backend developer,\nSOC scenario & CTF author @ HaxNation. handle: CVE';
+      return 'param-jasani (20), Mumbai. security & systems engineer, SC-200 certified.\ndetection engineering, infrastructure, rust. CTF developer @ HaxNation. handle: CVE';
     },
     ls: function (args) {
       var dir = (args[0] || '').replace(/\/$/, '').replace(/^~\//, '');
-      if (!dir || dir === '~') return 'about.txt  contact.txt  motto.txt  skills.txt  projects/  soc/  writing/';
-      if (dir === 'projects') return 'k8s-homelab/  soc-lab/  qualys-vmdr-lab/  elk-siem-pipeline/  enterprise-ad-lab/\nmayajal-core/  dispenser/  libmagic-rs/  secureroute/';
+      if (!dir || dir === '~') return 'about.txt  certs.txt  contact.txt  motto.txt  skills.txt  projects/  soc/  writing/';
+      if (dir === 'projects') return 'k8s-homelab/  soc-lab/  qualys-vmdr-lab/  elk-siem-pipeline/  enterprise-ad-lab/\nmayajal-core/  dispenser/  dz6/  libmagic-rs/  secureroute/';
       if (dir === 'soc') return '14 scenarios, 321 alerts, all authored by param:\nromcom  kimsuky  cobalt-kitty  midnight-blizzard  silent-tide  midnight-cipher\nazure-echo  silent-echo  emotet-cascade  arctic-echo  phantom-receipt\nkongtuke  ghost-script  ghost-shell\n→ ' + link(LINKS.soc);
-      if (dir === 'writing') return '10+ posts on the HaxNation blog, 4 DFIR / SOC writeups.\n→ ' + link(LINKS.blog) + '\n→ ' + link(LINKS.writeups);
+      if (dir === 'writing') return '10 posts on the HaxNation blog, 4 DFIR / SOC writeups.\n→ ' + link(LINKS.blog) + '\n→ ' + link(LINKS.writeups);
       return 'ls: cannot access \'' + esc(dir) + '\': No such file or directory';
     },
     cat: function (args) {
       var f = (args[0] || '').replace(/\.txt$/, '');
       if (f === 'about') return 'I learn by building: a 19-node k8s cluster, a Splunk SOC, an ELK SIEM, an AD lab.\nI write SOC scenarios and CTF challenges, and Rust tools when I get bored.';
+      if (f === 'certs') return 'Microsoft Certified: Security Operations Analyst Associate (SC-200)\nissued 2026-09 · expires 2027-09 · id E00BD7D30616360C\n→ ' + link(LINKS.sc200, 'verify on learn.microsoft.com');
       if (f === 'contact') return link('mailto:' + EMAIL, EMAIL);
       if (f === 'motto') return '"Until death, all defeat is psychological."';
-      if (f === 'skills') return 'soc:     splunk elk google-secops sysmon suricata qualys att&ck caldera\ninfra:   kubernetes rook-ceph haproxy docker terraform active-directory\nlang:    rust python java sql bash powershell\nbackend: django fastapi flask oracle mongodb';
+      if (f === 'skills') return esc('soc:     sentinel defender-xdr kql splunk elk google-secops sysmon suricata yara qualys att&ck caldera\ninfra:   kubernetes rook-ceph haproxy docker terraform azure active-directory/entra\nlang:    rust (tokio russh) python c java sql bash powershell\nbackend: django fastapi flask oracle postgresql mongodb');
       if (!f) return 'cat: missing file operand';
       return 'cat: ' + esc(f) + ': No such file or directory';
     },
@@ -199,7 +327,7 @@
       return 'opening ' + link(LINKS[k]) + ' …';
     },
     stats: function () {
-      return 'tryhackme      top 1% · 296 rooms · 47 badges\nsoc-simulator  14 scenarios · 321 alerts\nhomelab        19 nodes · 7.5 TB ceph\nwriting        10+ posts\ngoogle-skills  diamond league';
+      return 'sc-200         microsoft certified · ' + link(LINKS.sc200, 'E00BD7D30616360C') + '\ntryhackme      top 1% · 296 rooms · 47 badges\nsoc-simulator  14 scenarios · 321 alerts\nhomelab        19 nodes · 7.5 TB ceph\nwriting        10 posts on the haxnation blog\ngoogle-skills  diamond league · 14 badges';
     },
     theme: function () { return 'theme set to ' + toggleTheme() + '.'; },
     history: function () { return hist.map(function (h, i) { return '  ' + (i + 1) + '  ' + esc(h); }).join('\n') || '(empty)'; },
@@ -270,7 +398,7 @@
       var parts = v.split(' ');
       var pool = parts.length === 1 ? Object.keys(COMMANDS)
         : parts[0] === 'open' ? Object.keys(LINKS)
-        : parts[0] === 'cat' ? ['about', 'contact', 'motto', 'skills']
+        : parts[0] === 'cat' ? ['about', 'certs', 'contact', 'motto', 'skills']
         : parts[0] === 'ls' ? ['projects', 'soc', 'writing'] : [];
       var last = parts[parts.length - 1];
       var hits = pool.filter(function (c) { return c.indexOf(last) === 0; });
