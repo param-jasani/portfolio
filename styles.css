@@ -168,6 +168,8 @@ a:hover { background: var(--hl); color: var(--hl-ink); text-decoration: none; }
 
 .prose p, p.prose { max-width: var(--measure); }
 .prose p + p { margin-top: 1em; }
+.prose p, p.prose, .dash li, .projects p { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
 .note { color: var(--ink-dim); margin-top: 14px; text-align: left; }
 
 /* ---------- NAME ---------- */
@@ -178,14 +180,8 @@ a:hover { background: var(--hl); color: var(--hl-ink); text-decoration: none; }
   gap: 28px 40px;
   align-items: center;
 }
-.who {
-  font-size: clamp(44px, 8.4vw, 92px);
-  font-weight: 700;
-  line-height: .95;
-  letter-spacing: -.045em;
-  color: var(--ink-strong);
-}
-.whatis { margin-top: 18px; max-width: 52ch; font-size: 16px; }
+.whatis { max-width: 60ch; font-size: 16px; }
+.whatis-sub { margin-top: 8px; max-width: 60ch; color: var(--ink-dim); }
 
 .avatar { width: 188px; }
 .avatar img {
@@ -240,6 +236,7 @@ a:hover { background: var(--hl); color: var(--hl-ink); text-decoration: none; }
   width: 12ch;
 }
 .exit td { padding: 3px 0; }
+.exit th, .less, #clock, .count { font-variant-numeric: tabular-nums; }
 @media (max-width: 520px) {
   .exit tr { display: block; margin-bottom: 8px; }
   .exit th, .exit td { display: block; padding: 0; width: auto; }
@@ -329,18 +326,6 @@ kbd {
   padding: 0 5px;
 }
 
-/* Blinking block cursor after the name */
-.who::after {
-  content: "";
-  display: inline-block;
-  width: .5em;
-  height: .78em;
-  margin-left: .12em;
-  background: var(--ink-strong);
-  vertical-align: baseline;
-  animation: blink 1.1s steps(1) infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
 
 /* ---------- CHALLENGES ---------- */
 .body > .prose + .path { margin-top: 22px; }
@@ -433,13 +418,130 @@ body { padding-bottom: 34px; }
 .keys .flag { margin-top: 14px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .who::after { animation: none; }
   .avatar img { transition: none; }
 }
 
 @media print {
-  .less, .keys, #examples { display: none !important; }
+  .less, .keys, #examples, .cursor, .boot-screen, .hero-down { display: none !important; }
+  .hero { min-height: 0 !important; }
   .manbar, .cmd, .skip, #copy-email { display: none !important; }
   .avatar img { filter: none; }
   a { text-decoration: none; }
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 47px - 30px);
+  border-bottom: 1px solid var(--rule);
+}
+.hero-inner {
+  max-width: 1040px;
+  min-height: inherit;
+  margin: 0 auto;
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+}
+.hero-top, .hero-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  color: var(--ink-dim);
+}
+.hero-manual { font-style: italic; }
+#clock { color: var(--ink-strong); }
+
+.hero-main { margin-top: auto; }
+.hero-name {
+  font-size: clamp(64px, 13.5vw, 188px);
+  font-weight: 700;
+  line-height: .9;
+  letter-spacing: -.055em;
+  color: var(--ink-strong);
+  margin-left: -.04em;
+}
+.hero-name .word { display: block; overflow: hidden; padding-bottom: .04em; }
+.hero-name .word + .word { padding-left: 1.05ch; }
+.hero-name .ch { display: inline-block; will-change: transform; }
+.hero-whatis { margin-top: 26px; max-width: 46ch; font-size: 16px; }
+.hero-fig { font-style: italic; font-size: 13px; }
+.hero-down { color: var(--ink-strong); white-space: nowrap; display: inline-block; }
+
+@media (max-width: 720px) {
+  .hero { min-height: calc(100svh - 74px - 30px); }
+  .hero-top .hero-manual { display: none; }
+  .hero-foot { flex-direction: column; align-items: flex-start; }
+  .hero-name .word + .word { padding-left: 0; }
+}
+
+/* ---------- CERTIFICATIONS ---------- */
+.cert {
+  display: grid;
+  grid-template-columns: 20ch 1fr;
+  gap: 0 2ch;
+}
+.cert h3 { font-size: 15px; font-weight: 600; color: var(--ink-strong); }
+.cert p:not(.when) { margin-top: 4px; max-width: var(--measure); }
+.cred { letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .cert { grid-template-columns: 1fr; } }
+
+/* ---------- cursor ring (fine pointers, motion allowed) ---------- */
+.cursor { display: none; }
+@media (pointer: fine) {
+  .motion .cursor {
+    display: block;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 60;
+    width: 28px; height: 28px;
+    margin: -14px 0 0 -14px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: 0;
+    transition: width .25s ease-out, height .25s ease-out, margin .25s ease-out, opacity .2s ease-out, background-color .25s ease-out;
+  }
+  .motion .cursor.is-on { opacity: 1; }
+  .motion .cursor.is-link { width: 64px; height: 64px; margin: -32px 0 0 -32px; background-color: #fff; }
+}
+
+/* ---------- boot screen: first visit per session, timed in CSS ---------- */
+.boot-screen { display: none; }
+html.boot .boot-screen {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 24px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+  overflow: hidden;
+  animation: boot-out 0s linear 1.45s forwards;
+}
+html.boot .boot-screen p { white-space: pre; visibility: hidden; animation: boot-line 0s linear forwards; }
+html.boot .boot-screen p:nth-child(1) { animation-delay: .05s; }
+html.boot .boot-screen p:nth-child(2) { animation-delay: .22s; }
+html.boot .boot-screen p:nth-child(3) { animation-delay: .45s; }
+html.boot .boot-screen p:nth-child(4) { animation-delay: .7s; }
+html.boot .boot-screen p:nth-child(5) { animation-delay: .95s; }
+html.boot .boot-screen p:nth-child(6) { animation-delay: 1.15s; color: var(--ink-strong); }
+html.boot.booted .boot-screen { display: none; }
+@keyframes boot-line { to { visibility: visible; } }
+@keyframes boot-out { to { visibility: hidden; } }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-screen { display: none !important; }
 }
